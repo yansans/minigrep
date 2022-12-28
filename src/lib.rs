@@ -1,6 +1,7 @@
 use std::env;
 use std::error::Error;
 use std::fs;
+use colored::Colorize;
 
 pub struct Config {
     query: String,
@@ -44,7 +45,9 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         search(&config.query, &contents)
     };
 
-    for line in result {
+    let colored_result = colorize_query(&config.query, result);
+
+    for line in colored_result {
         println!("{line}")
     }
 
@@ -75,6 +78,19 @@ pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a st
     }
 
     result
+}
+
+pub fn colorize_query<'a> (query: &str, result: Vec<&str>) -> Vec<String>{
+
+    let mut colored_result = Vec::new();
+
+    for line in result {
+        let colored_line = line.replace(query, &query.yellow().to_string());
+        colored_result.push(colored_line);
+    }
+
+    colored_result
+
 }
 
 #[cfg(test)]
